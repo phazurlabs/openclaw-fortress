@@ -1,0 +1,142 @@
+# =============================================================================
+# signal-cli.service — Hardened systemd unit for signal-cli REST daemon
+# =============================================================================
+# OpenClaw Fortress — Phazur Labs Security Hardening
+#
+# Install:
+#   sudo cp scripts/signal-cli.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now signal-cli
+#
+# The service runs signal-cli in JSON-RPC / REST mode, bound to loopback only.
+# All security directives follow systemd hardening best practices.
+# =============================================================================
+
+[Unit]
+Description=Signal CLI REST Daemon (OpenClaw Fortress)
+Documentation=https://github.com/AsamK/signal-cli
+After=network-online.target
+Wants=network-online.target
+
+# Restart logic: if signal-cli crashes, wait 10s before retry
+StartLimitIntervalSec=300
+StartLimitBurst=5
+
+[Service]
+# --- Identity ---
+Type=simple
+User=signal-svc
+Group=signal-svc
+
+# --- Execution ---
+# Bind to loopback only — never expose to external interfaces
+ExecStart=/opt/signal-cli/bin/signal-cli \
+    --config /opt/signal-cli/config \
+    daemon \
+    --http \
+    --http-host 127.0.0.1 \
+    --http-port 8080
+
+# Graceful shutdown: SIGTERM first, then SIGKILL after 30s
+ExecStop=/bin/kill -SIGTERM $MAINPID
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# --- Restart policy ---
+Restart=on-failure
+RestartSec=10
+
+# --- Working directory ---
+WorkingDirectory=/opt/signal-cli
+
+# --- Logging ---
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=signal-cli
+
+# =============================================================================
+# SECURITY HARDENING
+# =============================================================================
+
+# --- Filesystem restrictions ---
+# Mount /usr, /boot, /efi as read-only
+ProtectSystem=strict
+
+# Make /home, /root, /run/user inaccessible
+ProtectHome=true
+
+# Private /tmp and /var/tmp (isolated from other services)
+PrivateTmp=true
+
+# Only allow read-write access to specific paths
+ReadWritePaths=/opt/signal-cli/config /opt/signal-cli/data /opt/signal-cli/logs
+
+# Make /proc/sys, /sys, /proc/sysrq-trigger, etc. read-only
+ProtectKernelTunables=true
+
+# Prevent loading kernel modules
+ProtectKernelModules=true
+
+# Protect kernel log ring buffer
+ProtectKernelLogs=true
+
+# Protect the hardware clock
+ProtectClock=true
+
+# Make cgroups filesystem read-only
+ProtectControlGroups=true
+
+# --- Privilege restrictions ---
+# Prevent gaining new privileges via execve (suid, sgid, capabilities)
+NoNewPrivileges=true
+
+# Drop ALL capabilities (signal-cli needs none)
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+# --- Namespace restrictions ---
+# Private /dev with only pseudo-devices (null, zero, random, urandom)
+PrivateDevices=true
+
+# Isolate network users (no access to other users' network stack)
+PrivateUsers=true
+
+# --- System call filtering ---
+# Restrict to a safe set of syscalls
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @clock @debug @reboot @swap @raw-io @obsolete @cpu-emulation @module
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+
+# --- Network restrictions ---
+# Only allow IPv4 and IPv6 (no netlink, packet, etc.)
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+
+# --- Misc hardening ---
+# No access to real-time scheduling
+RestrictRealtime=true
+
+# No namespace creation
+RestrictNamespaces=true
+
+# Lock down personality syscall
+LockPersonality=true
+
+# Prevent memory mappings that are both writable and executable
+MemoryDenyWriteExecute=true
+
+# Remove IPC access to other processes
+RemoveIPC=true
+
+# Set RLIMIT_NPROC to prevent fork bombs
+LimitNPROC=64
+
+# Limit open file descriptors
+LimitNOFILE=1024
+
+# Set umask to restrict file creation permissions
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

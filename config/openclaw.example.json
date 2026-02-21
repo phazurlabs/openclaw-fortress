@@ -1,0 +1,52 @@
+{
+  "name": "OpenClaw Fortress",
+  "version": "1.0.0",
+  "gateway": {
+    "host": "127.0.0.1",
+    "port": 18789
+  },
+  "llm": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-20250514",
+    "apiKeyEnv": "ANTHROPIC_API_KEY",
+    "maxTokens": 4096,
+    "temperature": 0.7,
+    "maxContextMessages": 50
+  },
+  "channels": {
+    "signal": {
+      "enabled": false,
+      "apiUrl": "http://127.0.0.1:8080",
+      "phoneNumber": "+1XXXXXXXXXX",
+      "allowedNumbers": [],
+      "allowedGroups": [],
+      "rateLimitPerMinute": 30,
+      "trustOnFirstUse": true
+    },
+    "discord": {
+      "enabled": false,
+      "botTokenEnv": "DISCORD_BOT_TOKEN",
+      "applicationId": "",
+      "allowedChannels": [],
+      "allowedServers": []
+    },
+    "webchat": {
+      "enabled": true,
+      "port": 18789,
+      "corsOrigin": "http://localhost:18789"
+    }
+  },
+  "security": {
+    "gatewayTokenEnv": "OPENCLAW_GATEWAY_TOKEN",
+    "encryptionKeyEnv": "OPENCLAW_ENCRYPTION_KEY",
+    "piiHmacSecretEnv": "OPENCLAW_PII_HMAC_SECRET",
+    "sessionSecretEnv": "OPENCLAW_SESSION_SECRET",
+    "promptGuardEnabled": true,
+    "piiDetectionEnabled": true,
+    "auditLogPath": "~/.openclaw/audit.jsonl",
+    "retentionDays": 90,
+    "maxSessionAge": 86400,
+    "signalDaemonLoopbackOnly": true
+  },
+  "systemPrompt": "You are a helpful AI assistant. Be concise and accurate."
+}
