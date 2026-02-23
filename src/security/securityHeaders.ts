@@ -6,25 +6,11 @@ import type { RequestHandler } from 'express';
 
 /**
  * Get helmet configuration for the gateway.
+ * CSP is applied per-route with a nonce for the WebChat inline script.
  */
 export function getHelmetConfig() {
   return {
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"], // needed for inline chat styles
-        imgSrc: ["'self'", 'data:'],
-        connectSrc: ["'self'", 'ws://localhost:*', 'wss://localhost:*'],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'none'"],
-        frameSrc: ["'none'"],
-        baseUri: ["'self'"],
-        formAction: ["'self'"],
-        frameAncestors: ["'none'"],
-      },
-    },
+    contentSecurityPolicy: false, // applied per-route via cspMiddleware
     crossOriginEmbedderPolicy: false, // needed for WS
     crossOriginOpenerPolicy: { policy: 'same-origin' as const },
     crossOriginResourcePolicy: { policy: 'same-origin' as const },
@@ -37,6 +23,32 @@ export function getHelmetConfig() {
     xPermittedCrossDomainPolicies: { permittedPolicies: 'none' as const },
     xPoweredBy: false,
     xXssProtection: true as const,
+  };
+}
+
+/**
+ * CSP middleware that generates a per-request nonce.
+ * The nonce is stored on res.locals.cspNonce for use in HTML templates.
+ */
+export function cspMiddleware(): RequestHandler {
+  return (_req, res, next) => {
+    const nonce = crypto.randomUUID().replace(/-/g, '');
+    res.locals['cspNonce'] = nonce;
+    res.setHeader('Content-Security-Policy', [
+      `default-src 'self'`,
+      `script-src 'nonce-${nonce}'`,
+      `style-src 'self' 'unsafe-inline'`,
+      `img-src 'self' data:`,
+      `connect-src 'self' ws://localhost:* wss://localhost:* ws://127.0.0.1:* wss://127.0.0.1:*`,
+      `font-src 'self'`,
+      `object-src 'none'`,
+      `media-src 'none'`,
+      `frame-src 'none'`,
+      `base-uri 'self'`,
+      `form-action 'self'`,
+      `frame-ancestors 'none'`,
+    ].join('; '));
+    next();
   };
 }
 

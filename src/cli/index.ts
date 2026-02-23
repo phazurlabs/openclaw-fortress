@@ -3,6 +3,12 @@
  * OpenClaw Fortress CLI
  * Main entry point for all commands.
  */
+import { config as loadEnv } from 'dotenv';
+import { resolve } from 'node:path';
+
+// Load .env from project root before anything else
+loadEnv({ path: resolve(import.meta.dirname, '../../.env') });
+
 import { loadConfig, ensureOpenClawDir } from '../core/config.js';
 import { initAuditLog } from '../security/auditLogger.js';
 import { startCommand } from './commands/start.js';

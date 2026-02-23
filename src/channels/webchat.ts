@@ -16,14 +16,15 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export function mountWebChatUI(app: Express): void {
   // Serve the chat UI at root
   app.get('/', (_req, res) => {
+    const nonce = res.locals['cspNonce'] as string ?? '';
     res.setHeader('Content-Type', 'text/html');
-    res.send(getWebChatHTML());
+    res.send(getWebChatHTML(nonce));
   });
 
   auditInfo('webchat_ui_mounted');
 }
 
-function getWebChatHTML(): string {
+function getWebChatHTML(nonce: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -155,7 +156,7 @@ function getWebChatHTML(): string {
     <button id="send-btn" disabled>Send</button>
   </div>
 
-  <script>
+  <script nonce="${nonce}">
     const messages = document.getElementById('messages');
     const input = document.getElementById('msg-input');
     const sendBtn = document.getElementById('send-btn');

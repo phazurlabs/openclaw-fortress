@@ -9,7 +9,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import type { OpenClawConfig, IncomingMessage as OCMessage, ChannelType } from '../types/index.js';
 import { authenticateRequest } from '../security/gatewayAuth.js';
-import { getHelmetConfig, getCorsConfig, additionalSecurityHeaders } from '../security/securityHeaders.js';
+import { getHelmetConfig, getCorsConfig, additionalSecurityHeaders, cspMiddleware } from '../security/securityHeaders.js';
 import { auditInfo, auditWarn, auditError } from '../security/auditLogger.js';
 
 export type MessageHandler = (msg: OCMessage) => Promise<string>;
@@ -35,6 +35,7 @@ export class Gateway {
     const corsOrigin = this.config.channels.webchat?.corsOrigin ?? 'http://localhost:18789';
     this.app.use(helmet(getHelmetConfig()));
     this.app.use(cors(getCorsConfig(corsOrigin)));
+    this.app.use(cspMiddleware());
     this.app.use(additionalSecurityHeaders());
 
     // Health endpoint
@@ -56,6 +57,16 @@ export class Gateway {
       path: '/ws',
       verifyClient: (info, cb) => {
         const ip = info.req.socket.remoteAddress ?? 'unknown';
+
+        // Allow loopback WebChat connections from same-origin (browser WS)
+        const origin = info.origin ?? info.req.headers['origin'];
+        const isLoopback = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+        const isSameOrigin = origin?.includes('localhost') || origin?.includes('127.0.0.1');
+        if (isLoopback && isSameOrigin) {
+          cb(true);
+          return;
+        }
+
         const token = this.extractToken(info.req);
         const auth = authenticateRequest(token, this.config.security.gatewayToken, ip);
         if (!auth.ok) {
