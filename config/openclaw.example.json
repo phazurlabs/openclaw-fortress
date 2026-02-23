@@ -31,7 +31,7 @@
       "allowedServers": []
     },
     "webchat": {
-      "enabled": true,
+      "enabled": false,
       "port": 18789,
       "corsOrigin": "http://localhost:18789"
     }

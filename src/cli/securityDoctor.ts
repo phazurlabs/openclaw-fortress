@@ -1,6 +1,6 @@
 /**
  * F-01: Security Doctor
- * 22-check unified health command.
+ * 23-check unified health command.
  */
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -9,6 +9,7 @@ import { getOpenClawDir, resolveSecret, resolvePath } from '../core/config.js';
 import { checkTokenEntropy } from '../security/gatewayAuth.js';
 import { isKeychainAvailable } from '../security/credentialStore.js';
 import { assertLoopback, checkDaemonHealth, checkNotRoot } from '../security/signalDaemonGuard.js';
+import { ALLOWED_DIRECTORIES } from '../tools/fileSecurityPolicy.js';
 
 type Check = (config: OpenClawConfig) => Promise<SecurityCheckResult>;
 
@@ -128,6 +129,16 @@ const checks: Check[] = [
     const ok = checkNotRoot();
     return result('F-01', 'Process Isolation', ok ? 'PASS' : 'FAIL', ok ? 'Not running as root' : 'Running as root!');
   },
+
+  // F-02: File tools security
+  async (c) => {
+    if (!c.fileTools.enabled) return result('F-02', 'File Tools Security', 'SKIP', 'File tools disabled');
+    const missing = ALLOWED_DIRECTORIES.filter(dir => !existsSync(dir));
+    if (missing.length > 0) {
+      return result('F-02', 'File Tools Security', 'WARN', `Missing dirs: ${missing.join(', ')}`);
+    }
+    return result('F-02', 'File Tools Security', 'PASS', `${ALLOWED_DIRECTORIES.length} sandbox dirs verified`);
+  },
 ];
 
 function result(id: string, name: string, status: SecurityCheckStatus, message: string): SecurityCheckResult {
@@ -135,7 +146,7 @@ function result(id: string, name: string, status: SecurityCheckStatus, message: 
 }
 
 /**
- * Run all 22 security checks and return results.
+ * Run all 23 security checks and return results.
  */
 export async function runSecurityDoctor(config: OpenClawConfig): Promise<SecurityCheckResult[]> {
   const results: SecurityCheckResult[] = [];

@@ -5,6 +5,7 @@
 import type { MessageParam } from '@anthropic-ai/sdk/resources/messages.js';
 import type { AgentSession, IncomingMessage, ChannelType, ToolDefinition } from '../types/index.js';
 import { LLMClient, type LLMResponse, type ToolCall } from './llm.js';
+import type { StateManager } from './stateManager.js';
 import { auditInfo, auditError } from '../security/auditLogger.js';
 
 const MAX_TOOL_ROUNDS = 5;
@@ -18,6 +19,7 @@ export interface AgentOptions {
   toolExecutor?: ToolExecutor;
   maxContextMessages: number;
   maxSessionAge: number;
+  stateManager?: StateManager;
 }
 
 export class Agent {
@@ -28,6 +30,7 @@ export class Agent {
   private maxContextMessages: number;
   private sessions = new Map<string, AgentSession>();
   private maxSessionAge: number;
+  private stateManager?: StateManager;
 
   constructor(opts: AgentOptions) {
     this.llm = opts.llm;
@@ -36,6 +39,7 @@ export class Agent {
     this.toolExecutor = opts.toolExecutor;
     this.maxContextMessages = opts.maxContextMessages;
     this.maxSessionAge = opts.maxSessionAge;
+    this.stateManager = opts.stateManager;
   }
 
   /**
@@ -98,6 +102,7 @@ export class Agent {
       });
 
       session.lastActiveAt = Date.now();
+      this.persistSession(session);
 
       auditInfo('agent_response', {
         channel: msg.channel,
@@ -124,6 +129,7 @@ export class Agent {
 
   /**
    * Get an existing session or create a new one.
+   * Checks in-memory cache first, then disk (via StateManager), then creates new.
    */
   private getOrCreateSession(contactId: string, channel: ChannelType): AgentSession {
     const key = `${channel}:${contactId}`;
@@ -131,8 +137,16 @@ export class Agent {
 
     if (session && session.expiresAt < Date.now()) {
       this.sessions.delete(key);
+      if (this.stateManager) {
+        try { this.stateManager.deleteSession(session.id); } catch { /* best effort */ }
+      }
       session = undefined;
       auditInfo('session_expired', { channel, contactId });
+    }
+
+    // Try disk restore on cache miss
+    if (!session && this.stateManager) {
+      session = this.tryRestoreFromDisk(key, contactId, channel);
     }
 
     if (!session) {
@@ -152,6 +166,30 @@ export class Agent {
     }
 
     return session;
+  }
+
+  /**
+   * Try to restore a session from disk by scanning persisted sessions
+   * for a matching channel:contactId key.
+   */
+  private tryRestoreFromDisk(key: string, contactId: string, channel: ChannelType): AgentSession | undefined {
+    if (!this.stateManager) return undefined;
+    const sessionIds = this.stateManager.listSessions();
+    for (const sid of sessionIds) {
+      const loaded = this.stateManager.loadSession(sid);
+      if (!loaded) continue;
+      if (loaded.channel === channel && loaded.contactId === contactId) {
+        if (loaded.expiresAt < Date.now()) {
+          this.stateManager.deleteSession(sid);
+          auditInfo('session_expired', { channel, contactId });
+          return undefined;
+        }
+        this.sessions.set(key, loaded);
+        auditInfo('session_restored', { channel, contactId, sessionId: loaded.id });
+        return loaded;
+      }
+    }
+    return undefined;
   }
 
   /**
@@ -208,16 +246,69 @@ export class Agent {
   }
 
   /**
-   * Clear a specific session.
+   * Persist a session to disk via StateManager.
    */
-  clearSession(contactId: string, channel: ChannelType): void {
-    this.sessions.delete(`${channel}:${contactId}`);
+  private persistSession(session: AgentSession): void {
+    if (!this.stateManager) return;
+    try {
+      this.stateManager.saveSession(session);
+    } catch (err) {
+      auditError('session_persist_failed', {
+        sessionId: session.id,
+        details: { error: String(err) },
+      });
+    }
   }
 
   /**
-   * Clear all sessions.
+   * Restore all non-expired sessions from disk into memory.
+   * Returns the count of restored sessions.
+   */
+  restoreAllSessions(): number {
+    if (!this.stateManager) return 0;
+    const now = Date.now();
+    let restored = 0;
+    const pruned = this.stateManager.pruneExpiredSessions();
+    if (pruned > 0) {
+      auditInfo('sessions_pruned_on_startup', { details: { count: pruned } });
+    }
+    for (const sid of this.stateManager.listSessions()) {
+      const session = this.stateManager.loadSession(sid);
+      if (!session) continue;
+      if (session.expiresAt < now) {
+        this.stateManager.deleteSession(sid);
+        continue;
+      }
+      const key = `${session.channel}:${session.contactId}`;
+      if (!this.sessions.has(key)) {
+        this.sessions.set(key, session);
+        restored++;
+      }
+    }
+    return restored;
+  }
+
+  /**
+   * Clear a specific session (memory + disk).
+   */
+  clearSession(contactId: string, channel: ChannelType): void {
+    const key = `${channel}:${contactId}`;
+    const session = this.sessions.get(key);
+    if (session && this.stateManager) {
+      try { this.stateManager.deleteSession(session.id); } catch { /* best effort */ }
+    }
+    this.sessions.delete(key);
+  }
+
+  /**
+   * Clear all sessions (memory + disk).
    */
   clearAllSessions(): void {
+    if (this.stateManager) {
+      for (const session of this.sessions.values()) {
+        try { this.stateManager.deleteSession(session.id); } catch { /* best effort */ }
+      }
+    }
     this.sessions.clear();
   }
 

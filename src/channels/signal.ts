@@ -159,6 +159,46 @@ export class SignalChannel {
   }
 
   /**
+   * Send a file attachment via signal-cli REST API.
+   */
+  async sendAttachment(
+    recipient: string,
+    base64Data: string,
+    filename: string,
+    contentType: string,
+    caption?: string,
+    groupId?: string,
+  ): Promise<void> {
+    const url = `${this.apiUrl}/v2/send`;
+    const body: Record<string, unknown> = {
+      number: this.phoneNumber,
+      recipients: groupId ? [groupId] : [recipient],
+      base64_attachments: [
+        `data:${contentType};filename=${filename};base64,${base64Data}`,
+      ],
+    };
+
+    if (caption) {
+      body['message'] = caption;
+    }
+
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!resp.ok) {
+      throw new Error(`Signal attachment send failed: HTTP ${resp.status}`);
+    }
+
+    auditInfo('signal_attachment_sent', {
+      contactId: recipient,
+      details: { filename, contentType },
+    });
+  }
+
+  /**
    * Validate attachments (MIME type, size).
    */
   private validateAttachments(dm: SignalDataMessage): IncomingMessage['attachments'] {

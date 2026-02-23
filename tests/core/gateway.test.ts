@@ -24,6 +24,7 @@ vi.mock('../../src/security/gatewayAuth.js', () => ({
 vi.mock('../../src/security/securityHeaders.js', () => ({
   getHelmetConfig: vi.fn(() => ({})),
   getCorsConfig: vi.fn(() => ({ origin: '*' })),
+  cspMiddleware: vi.fn(() => (_req: unknown, _res: unknown, next: () => void) => next()),
   additionalSecurityHeaders: vi.fn(() => (_req: unknown, _res: unknown, next: () => void) => next()),
 }));
 
@@ -61,6 +62,11 @@ describe('Gateway', () => {
       retentionDays: 90,
       maxSessionAge: 86400,
       signalDaemonLoopbackOnly: true,
+    },
+    fileTools: {
+      enabled: true,
+      allowedDirectories: [],
+      maxFileSizeBytes: 10_485_760,
     },
     systemPrompt: 'You are a test assistant.',
   };

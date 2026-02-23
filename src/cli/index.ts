@@ -23,7 +23,8 @@ OpenClaw Fortress — AI Agent Platform with Security Hardening
 
 Usage:
   openclaw start                    Start gateway + all channels
-  openclaw doctor                   Run security health check (22 controls)
+  openclaw start --webchat          Start with WebChat enabled (dev/test)
+  openclaw doctor                   Run security health check (23 controls)
   openclaw signal verify-contacts   Manage Signal safety numbers
   openclaw signal erase-contact     GDPR erasure for a Signal contact
   openclaw security audit           View audit log
@@ -32,6 +33,7 @@ Usage:
 Options:
   --help, -h    Show this help
   --version     Show version
+  --webchat     Enable WebChat for testing (overrides config)
 `.trim();
 
 async function main(): Promise<void> {
@@ -51,13 +53,27 @@ async function main(): Promise<void> {
   ensureOpenClawDir();
 
   // Load config and init audit
-  const config = loadConfig();
+  let config = loadConfig();
   initAuditLog(config.security.auditLogPath);
 
   const command = args[0];
   const subcommand = args[1];
 
   try {
+    // --webchat flag: override WebChat to enabled for dev/test
+    if (args.includes('--webchat')) {
+      config = {
+        ...config,
+        channels: {
+          ...config.channels,
+          webchat: {
+            ...(config.channels.webchat ?? { port: 18789, corsOrigin: 'http://localhost:18789' }),
+            enabled: true,
+          },
+        },
+      };
+    }
+
     switch (command) {
       case 'start':
         await startCommand(config);

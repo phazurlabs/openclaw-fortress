@@ -24,7 +24,7 @@ export const DiscordChannelConfigSchema = z.object({
 export type DiscordChannelConfig = z.infer<typeof DiscordChannelConfigSchema>;
 
 export const WebChatConfigSchema = z.object({
-  enabled: z.boolean().default(true),
+  enabled: z.boolean().default(false),
   port: z.number().int().default(18789),
   corsOrigin: z.string().default('http://localhost:18789'),
 });
@@ -70,6 +70,15 @@ export const LLMConfigSchema = z.object({
 });
 export type LLMConfig = z.infer<typeof LLMConfigSchema>;
 
+// ── File Tools Config ────────────────────────────────────────
+
+export const FileToolsConfigSchema = z.object({
+  enabled: z.boolean().default(true),
+  allowedDirectories: z.array(z.string()).default([]),
+  maxFileSizeBytes: z.number().default(10_485_760), // 10MB
+}).default(() => ({ enabled: true, allowedDirectories: [], maxFileSizeBytes: 10_485_760 }));
+export type FileToolsConfig = z.infer<typeof FileToolsConfigSchema>;
+
 // ── Main Config ──────────────────────────────────────────────
 
 export const OpenClawConfigSchema = z.object({
@@ -100,6 +109,7 @@ export const OpenClawConfigSchema = z.object({
     maxSessionAge: 86400,
     signalDaemonLoopbackOnly: true,
   })),
+  fileTools: FileToolsConfigSchema,
   systemPrompt: z.string().default(
     'You are a helpful AI assistant. Be concise and accurate.',
   ),

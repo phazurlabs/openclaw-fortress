@@ -29,6 +29,7 @@
     "eventsource": "^4.1.0",
     "express": "^5.2.1",
     "helmet": "^8.1.0",
+    "pdfkit": "^0.17.2",
     "ws": "^8.19.0",
     "zod": "^4.3.6"
   },
@@ -36,6 +37,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.3.0",
+    "@types/pdfkit": "^0.17.5",
     "@types/ws": "^8.18.1",
     "eslint": "^10.0.1",
     "tsx": "^4.21.0",
