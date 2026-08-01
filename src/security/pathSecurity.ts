@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * G-02: Path Security
  * Session ID validation, directory jail checks, null byte blocking.

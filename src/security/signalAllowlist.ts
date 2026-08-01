@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S-02: Signal Allowlist
  * DM allowlist enforcement, silent drop, rate limiting.

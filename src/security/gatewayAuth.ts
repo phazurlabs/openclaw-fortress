@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * G-01: Gateway Auth
  * Timing-safe token verification, entropy check, rate limiting.

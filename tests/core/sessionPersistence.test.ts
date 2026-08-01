@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for Session Persistence via StateManager.
  * Verifies that sessions survive agent recreation (simulated restart).

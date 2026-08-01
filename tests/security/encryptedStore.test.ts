@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for P-03: Encrypted Store
  * encrypt/decrypt roundtrip, tamper detection, writeEncryptedJSON/readEncryptedJSON

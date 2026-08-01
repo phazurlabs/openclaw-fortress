@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S-04: Signal Schema
  * Zod validation for all signal-cli SSE event fields.

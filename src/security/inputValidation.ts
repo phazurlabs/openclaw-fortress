@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * E-05: Input Validation
  * Signal message field validation, attachment MIME gating.

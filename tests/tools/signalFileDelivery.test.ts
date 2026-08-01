@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for Signal File Delivery tool.
  * Validates path security, size checks, and attachment encoding.

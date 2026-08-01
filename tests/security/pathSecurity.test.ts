@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for G-02: Path Security
  * isValidSessionId, isInsideJail, containsNullByte, validatePath, sanitizePathSegment

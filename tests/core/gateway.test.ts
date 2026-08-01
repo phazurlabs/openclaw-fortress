@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for 1.2: Gateway Server
  * Basic test that Gateway class can be instantiated with mock config.

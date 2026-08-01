@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Built-in Tool Definitions
  * 7 file tools for the Anthropic tool_use API.

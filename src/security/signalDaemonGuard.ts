@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S-01: Signal Daemon Guard
  * Loopback assertion, health check, process isolation guard.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * E-02: Data Minimization
  * LLM metadata stripping, session pruning.

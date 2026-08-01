@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * P-01: PII Utilities
  * HMAC phone hashing, masking, E.164 validation

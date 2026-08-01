@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.5: Signal Channel
  * Connect to signal-cli daemon via HTTP API (SSE event stream).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * A-02: Audit Logger
  * Structured JSONL audit log with PII scrubbing and CRITICAL alerting.

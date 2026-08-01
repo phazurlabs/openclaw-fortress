@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * G-04: Security Headers
  * CSP, X-Frame-Options, helmet config, CORS.

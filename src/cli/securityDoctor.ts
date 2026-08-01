@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * F-01: Security Doctor
  * 23-check unified health command.

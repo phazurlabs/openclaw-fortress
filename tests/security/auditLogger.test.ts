@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for A-02: Audit Logger
  * audit function writes JSONL, PII scrubbing in details, severity levels

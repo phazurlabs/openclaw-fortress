@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.7: Discord Channel
  * Discord.js bot with DM support and channel allowlist.

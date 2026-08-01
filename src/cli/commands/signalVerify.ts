@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CLI: openclaw signal verify-contacts
  * List and manage Signal safety numbers.

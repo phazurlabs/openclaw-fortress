@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * P-02: PII Detector
  * Detect PII (phone, SSN, CC, email, gov ID) in text and redact.

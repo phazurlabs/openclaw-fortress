@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * A-03: Session Manager
  * Crypto-random IDs, channel binding, rotation, expiry.

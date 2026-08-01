@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * E-03: Right to Erasure
  * GDPR Article 17 — full contact data destruction.

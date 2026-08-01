@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.2: Gateway Server
  * WebSocket server with HTTP, auth, health endpoint.

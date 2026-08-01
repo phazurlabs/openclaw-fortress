@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for G-01: Gateway Auth
  * verifyToken (timing-safe), checkTokenEntropy, checkRateLimit,

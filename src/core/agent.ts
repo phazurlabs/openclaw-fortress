@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.3: Agent Runtime
  * Per-contact agent instances with conversation history and tool execution.

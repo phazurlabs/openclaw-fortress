@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * P-04: Credential Store
  * OS keychain with env var fallback.

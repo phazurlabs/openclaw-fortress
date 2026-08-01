@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.6: WebChat Channel
  * Express server serving a minimal chat UI with WebSocket.

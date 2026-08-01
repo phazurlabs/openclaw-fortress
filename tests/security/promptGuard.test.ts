@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for A-01: Prompt Guard
  * scanPrompt against all 13+ injection patterns

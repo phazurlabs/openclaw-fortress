@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * E-01: PII Consent
  * Per-contact consent store (encrypted).

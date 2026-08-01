@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Built-in Tool Executor
  * Implements 7 file tools with sandboxed security.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.8: Skill Loader
  * Load skills from ~/.openclaw/skills/ directories.

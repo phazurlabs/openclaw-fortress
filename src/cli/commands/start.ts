@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CLI: openclaw start
  * Launch gateway + all enabled channels.

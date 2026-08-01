@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * A-01: Prompt Guard
  * 13+ injection patterns detection, PII-safe logging, session suspension.

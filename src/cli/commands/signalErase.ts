@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * CLI: openclaw signal erase-contact
  * GDPR erasure for a Signal contact.

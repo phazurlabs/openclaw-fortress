@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Skill Runner
  * Execute skill tools with workspace isolation.

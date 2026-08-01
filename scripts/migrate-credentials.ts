@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * =============================================================================
  * migrate-credentials.ts — Credential Migration to OS Keychain

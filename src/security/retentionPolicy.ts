@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * E-04: Retention Policy
  * Configurable TTLs, auto-expiry, secure deletion.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for S-02: Signal Allowlist
  * isNumberAllowed, isGroupAllowed, checkAllowlist, resetContactRateLimits

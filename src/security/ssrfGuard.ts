@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * G-03: SSRF Guard
  * Private IP blocking, DNS rebinding prevention, scheme blocking.

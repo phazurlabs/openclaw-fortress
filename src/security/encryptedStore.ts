@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * P-03: Encrypted Store
  * AES-256-GCM encrypt/decrypt with HKDF key derivation

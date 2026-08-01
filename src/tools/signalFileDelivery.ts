@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Signal File Delivery
  * Sends a file from the server to a Signal contact as an attachment.

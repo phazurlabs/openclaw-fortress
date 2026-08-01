@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * 1.4: LLM Integration (Anthropic Claude)
  * SDK wrapper with retry logic, streaming, token management.

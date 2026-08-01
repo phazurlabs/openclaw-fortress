@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * A-04: Skill Integrity
  * SHA256 manifest verification on every execution.

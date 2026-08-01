@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * S-03: Signal Safety Numbers
  * Fingerprint tracking, MITM suspension, clearance CLI.

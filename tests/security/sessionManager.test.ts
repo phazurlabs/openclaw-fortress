@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for A-03: Session Manager
  * createSession, validateSession (binding, expiry), rotateSession,

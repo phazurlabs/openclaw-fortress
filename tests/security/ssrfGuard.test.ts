@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Tests for G-03: SSRF Guard
  * isPrivateIP, validateURL (private IPs, bad schemes, credentials in URL)

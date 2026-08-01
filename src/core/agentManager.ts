@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /**
  * Agent Manager
  * Creates and manages agent instances for the gateway.
